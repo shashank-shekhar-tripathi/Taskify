@@ -108,8 +108,9 @@ SIMPLE_JWT = {
 # ).split(',')
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = [
-    "https://taskify-sigma-peach.vercel.app"
-]
+CSRF_TRUSTED_ORIGINS = config(
+    'CSRF_TRUSTED_ORIGINS',
+    default='https://taskify-git-main-shashank-shekhar-tripathis-projects.vercel.app,https://taskify-dah7ezt98-shashank-shekhar-tripathis-projects.vercel.app'
+).split(',')
 
 CORS_ALLOW_CREDENTIALS = True
