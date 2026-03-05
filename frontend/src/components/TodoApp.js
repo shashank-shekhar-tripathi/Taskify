@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { todosAPI } from '../api';
-import { useAuth } from '../App';
+import { useAuth, useTheme } from '../App';
 import { format, isPast, parseISO } from 'date-fns';
 
 const CATEGORIES = ['all', 'personal', 'work', 'shopping', 'health', 'other'];
@@ -8,6 +8,16 @@ const PRIORITIES = ['all', 'high', 'medium', 'low'];
 
 const CATEGORY_ICONS = { personal: '👤', work: '💼', shopping: '🛒', health: '💪', other: '📌', all: '📋' };
 const PRIORITY_ICONS = { high: '🔴', medium: '🟡', low: '🟢' };
+
+function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme();
+  return (
+    <button className="theme-toggle" onClick={toggleTheme} title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}>
+      <span className="theme-icon sun">☀️</span>
+      <span className="theme-icon moon">🌙</span>
+    </button>
+  );
+}
 
 function TodoModal({ todo, onClose, onSave }) {
   const initial = todo || { title: '', description: '', priority: 'medium', category: 'personal', due_date: '' };
@@ -133,7 +143,7 @@ export default function TodoApp() {
   const [search, setSearch] = useState('');
   const [filterCat, setFilterCat] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
-  const [modal, setModal] = useState(null); // null | 'new' | todo object
+  const [modal, setModal] = useState(null);
   const [editTodo, setEditTodo] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -142,7 +152,7 @@ export default function TodoApp() {
       const [todosRes, statsRes] = await Promise.all([todosAPI.getAll(), todosAPI.getStats()]);
       setTodos(todosRes.data.results || todosRes.data);
       setStats(statsRes.data);
-    } catch {} finally {
+    } catch { } finally {
       setLoading(false);
     }
   }, []);
@@ -158,7 +168,7 @@ export default function TodoApp() {
         completed: p.completed + (data.completed ? 1 : -1),
         pending: p.pending + (data.completed ? -1 : 1),
       }));
-    } catch {}
+    } catch { }
   };
 
   const handleSave = (saved, isEdit) => {
@@ -184,7 +194,7 @@ export default function TodoApp() {
         completed: todo?.completed ? p.completed - 1 : p.completed,
         pending: !todo?.completed ? p.pending - 1 : p.pending,
       }));
-    } catch {}
+    } catch { }
   };
 
   const filtered = todos.filter(t => {
@@ -200,6 +210,13 @@ export default function TodoApp() {
   const progress = stats.total ? Math.round((stats.completed / stats.total) * 100) : 0;
   const initials = user?.first_name ? `${user.first_name[0]}${user.last_name?.[0] || ''}`.toUpperCase()
     : user?.username?.[0]?.toUpperCase() || '?';
+
+  const getGreeting = () => {
+    const h = new Date().getHours();
+    if (h < 12) return '☀️ Good Morning';
+    if (h < 18) return '🌤️ Good Afternoon';
+    return '🌙 Good Evening';
+  };
 
   return (
     <div className="app-layout">
@@ -225,7 +242,7 @@ export default function TodoApp() {
         </div>
         <nav className="sidebar-nav">
           <div className="nav-label">Filter by Status</div>
-          {[['all','All Tasks'], ['pending','Pending'], ['completed','Completed']].map(([v, l]) => (
+          {[['all', 'All Tasks'], ['pending', 'Pending'], ['completed', 'Completed']].map(([v, l]) => (
             <div key={v} className={`nav-item ${filterStatus === v ? 'active' : ''}`} onClick={() => { setFilterStatus(v); setSidebarOpen(false); }}>
               <span className="nav-icon">{v === 'all' ? '📋' : v === 'pending' ? '⏳' : '✅'}</span>
               {l}
@@ -243,6 +260,10 @@ export default function TodoApp() {
           ))}
         </nav>
         <div className="sidebar-footer">
+          <div className="sidebar-theme">
+            <span className="sidebar-theme-label">Theme</span>
+            <ThemeToggle />
+          </div>
           <button className="btn-logout" onClick={logout}>
             <span>⎋</span> Sign Out
           </button>
@@ -252,8 +273,8 @@ export default function TodoApp() {
       {/* Main */}
       <main className="main-content">
         <div className="main-header fade-up">
-          <h2>Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 18 ? 'Afternoon' : 'Evening'} {user?.first_name || user?.username} 👋</h2>
-          <p>You have <strong>{stats.pending}</strong> pending tasks today.</p>
+          <h2>{getGreeting()}, {user?.first_name || user?.username}</h2>
+          <p>You have <strong>{stats.pending}</strong> pending tasks{stats.high_priority > 0 && <>, <strong style={{ color: 'var(--accent-2)' }}>{stats.high_priority}</strong> high priority</>}.</p>
         </div>
 
         {/* Stats */}
@@ -308,7 +329,7 @@ export default function TodoApp() {
 
         {/* Todo List */}
         {loading ? (
-          <>{[1,2,3].map(i => <div key={i} className="skeleton" style={{ animationDelay: `${i * 0.1}s` }} />)}</>
+          <>{[1, 2, 3].map(i => <div key={i} className="skeleton" style={{ animationDelay: `${i * 0.1}s` }} />)}</>
         ) : filtered.length === 0 ? (
           <div className="empty-state">
             <div className="empty-icon">🎯</div>

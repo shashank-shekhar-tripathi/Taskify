@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { authAPI } from '../api';
-import { useAuth } from '../App';
+import { useAuth, useTheme } from '../App';
 
 export default function Login() {
   const { login } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [form, setForm] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -29,6 +30,12 @@ export default function Login() {
   return (
     <div className="auth-wrapper">
       <div className="auth-card">
+        <div style={{ position: 'absolute', top: 20, right: 20 }}>
+          <button className="theme-toggle" onClick={toggleTheme} title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}>
+            <span className="theme-icon sun">☀️</span>
+            <span className="theme-icon moon">🌙</span>
+          </button>
+        </div>
         <div className="auth-logo">
           <h1>✦ Taskify</h1>
           <p>Sign in to manage your tasks</p>

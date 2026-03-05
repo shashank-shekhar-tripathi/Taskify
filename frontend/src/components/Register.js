@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { authAPI } from '../api';
-import { useAuth } from '../App';
+import { useAuth, useTheme } from '../App';
 
 export default function Register() {
   const { login } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [form, setForm] = useState({ username: '', email: '', password: '', first_name: '', last_name: '' });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -39,12 +40,18 @@ export default function Register() {
   return (
     <div className="auth-wrapper">
       <div className="auth-card">
+        <div style={{ position: 'absolute', top: 20, right: 20 }}>
+          <button className="theme-toggle" onClick={toggleTheme} title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}>
+            <span className="theme-icon sun">☀️</span>
+            <span className="theme-icon moon">🌙</span>
+          </button>
+        </div>
         <div className="auth-logo">
           <h1>✦ Taskify</h1>
           <p>Create your account</p>
         </div>
         <form onSubmit={submit}>
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:14 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
             <div className="form-group">
               <label>First Name</label>
               <input name="first_name" value={form.first_name} onChange={handle} placeholder="John" />
