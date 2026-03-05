@@ -455,10 +455,73 @@ input.form-input:focus, select.form-input:focus { border-color: var(--accent-1);
 /* Loading skeleton */
 .skeleton { background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-hover) 50%, var(--bg-card) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-sm); height: 72px; margin-bottom: 10px; }
 
+/* Mobile header - hidden on desktop */
+.mobile-header { display: none; }
+.sidebar-overlay { display: none; }
+
 /* Responsive */
 @media (max-width: 768px) {
   .stats-grid { grid-template-columns: 1fr 1fr; }
-  .sidebar { display: none; }
-  .main-content { padding: 20px; }
+  .main-content { padding: 20px; padding-top: 76px; }
   .form-row { grid-template-columns: 1fr; }
+
+  /* Mobile header bar */
+  .mobile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 56px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+    z-index: 200;
+  }
+  .mobile-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .mobile-menu-btn, .mobile-logout-btn {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 1.3rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+  }
+  .mobile-menu-btn:hover { background: rgba(108,99,255,.15); border-color: var(--accent-1); }
+  .mobile-logout-btn:hover { background: rgba(255,101,132,.15); border-color: var(--accent-2); color: var(--accent-2); }
+
+  /* Sidebar overlay */
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(13, 15, 26, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 299;
+  }
+
+  /* Sidebar as slide-in drawer */
+  .sidebar {
+    display: flex;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: 280px;
+    z-index: 300;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  .sidebar.sidebar-open {
+    transform: translateX(0);
+  }
 }

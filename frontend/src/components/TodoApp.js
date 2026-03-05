@@ -135,6 +135,7 @@ export default function TodoApp() {
   const [filterStatus, setFilterStatus] = useState('all');
   const [modal, setModal] = useState(null); // null | 'new' | todo object
   const [editTodo, setEditTodo] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const fetchAll = useCallback(async () => {
     try {
@@ -202,8 +203,18 @@ export default function TodoApp() {
 
   return (
     <div className="app-layout">
+      {/* Mobile Header */}
+      <div className="mobile-header">
+        <button className="mobile-menu-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>☰</button>
+        <div className="mobile-logo">✦ Taskify</div>
+        <button className="mobile-logout-btn" onClick={logout}>⎋</button>
+      </div>
+
+      {/* Sidebar Overlay */}
+      {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />}
+
       {/* Sidebar */}
-      <aside className="sidebar">
+      <aside className={`sidebar ${sidebarOpen ? 'sidebar-open' : ''}`}>
         <div className="sidebar-logo">✦ Taskify</div>
         <div className="sidebar-user">
           <div className="avatar">{initials}</div>
@@ -215,7 +226,7 @@ export default function TodoApp() {
         <nav className="sidebar-nav">
           <div className="nav-label">Filter by Status</div>
           {[['all','All Tasks'], ['pending','Pending'], ['completed','Completed']].map(([v, l]) => (
-            <div key={v} className={`nav-item ${filterStatus === v ? 'active' : ''}`} onClick={() => setFilterStatus(v)}>
+            <div key={v} className={`nav-item ${filterStatus === v ? 'active' : ''}`} onClick={() => { setFilterStatus(v); setSidebarOpen(false); }}>
               <span className="nav-icon">{v === 'all' ? '📋' : v === 'pending' ? '⏳' : '✅'}</span>
               {l}
               <span className="nav-count">
@@ -225,7 +236,7 @@ export default function TodoApp() {
           ))}
           <div className="nav-label">Filter by Category</div>
           {CATEGORIES.map(cat => (
-            <div key={cat} className={`nav-item ${filterCat === cat ? 'active' : ''}`} onClick={() => setFilterCat(cat)}>
+            <div key={cat} className={`nav-item ${filterCat === cat ? 'active' : ''}`} onClick={() => { setFilterCat(cat); setSidebarOpen(false); }}>
               <span className="nav-icon">{CATEGORY_ICONS[cat]}</span>
               {cat.charAt(0).toUpperCase() + cat.slice(1)}
             </div>
