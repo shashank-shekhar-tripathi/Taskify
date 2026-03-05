@@ -110,7 +110,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = config(
     'CSRF_TRUSTED_ORIGINS',
-    default='https://taskify-git-main-shashank-shekhar-tripathis-projects.vercel.app,https://taskify-dah7ezt98-shashank-shekhar-tripathis-projects.vercel.app'
+    default='https://taskify-git-main-shashank-shekhar-tripathis-projects.vercel.app,https://taskify-dah7ezt98-shashank-shekhar-tripathis-projects.vercel.app,http://localhost:8000,http://127.0.0.1:8000'
 ).split(',')
 
 CORS_ALLOW_CREDENTIALS = True
