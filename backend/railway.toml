@@ -3,6 +3,4 @@ builder = "NIXPACKS"
 
 [deploy]
 startCommand = "gunicorn backend.wsgi:application"
-healthcheckPath = "/api/"
-healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
